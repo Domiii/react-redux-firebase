@@ -136,14 +136,26 @@ export const watchEvent = (firebase, dispatch, { type, path, populates, queryPar
         .then((results) => {
           // dispatch child sets first so isLoaded is only set to true for
           // populatedDataToJS after all data is in redux (Issue #121)
+          // forEach(results, (result, path) => {
+          //   dispatch({
+          //     type: SET,
+          //     path,
+          //     data: result,
+          //     timestamp: Date.now(),
+          //     requesting: false,
+          //     requested: true
+          //   })
+          // })
           forEach(results, (result, path) => {
-            dispatch({
-              type: SET,
-              path,
-              data: result,
-              timestamp: Date.now(),
-              requesting: false,
-              requested: true
+            forEach(result, (child, key) => {
+              dispatch({
+                type: SET,
+                path: `${path}/${key}`,
+                data: child,
+                timestamp: Date.now(),
+                requesting: false,
+                requested: true
+              })
             })
           })
           dispatch({
